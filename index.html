@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map trial</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <script src="amcharts4/core.js"></script>
+    <script src="amcharts4/maps.js"></script>
+    <script src="geodata/worldLow.js"></script>
+    <script>
+        var chart = am4core.create(
+            "chartdiv2",
+            am4maps.MapChart
+        );
+        chart.geodata = am4geodata_worldLow;
+        chart.projection = new am4maps.projections.Miller();
+        var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
+        polygonSeries.useGeodata = true;
+        polygonSeries.mapPolygons.template.events.on("hit", function(ev){
+            chart.zoomToMapObject(ev.target);
+        });
+        // You can use this to exclude spatial from the map
+        // There is also include, with this, 
+        polygonSeries.exclude = ["AQ", "CH"];
+        var polygonTemplate = polygonSeries.mapPolygons.template;
+        polygonTemplate.tooltipText = "{name}: {value}";
+        polygonTemplate.fill = am4core.color("#74B266");
+
+        var hs = polygonTemplate.states.create("hover");
+        hs.properties.fill = am4core.color("#367B25");
+        var label = chart.chartContainer.createChild(
+            am4core.Label
+        );
+        label.text = "franceLow";
+        polygonSeries.data = [{
+            "id":"US",
+            "name": "United States",
+            "value": 100,
+            "fill": am4core.color("#F05C5C"),
+        },{
+            "id":"NG",
+            "name": "Nigeria",
+            "value": 50,
+            "fill": am4core.color("#5C5CFF"),
+        }];
+        polygonTemplate.propertyFields.fill = "fill";
+    </script>
+    <div id="chartdiv2"></div>
+</body>
+</html>
